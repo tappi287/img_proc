@@ -1,0 +1,20 @@
+[project]
+name = "img-proc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "tappi287", email = "tapper.stefan@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "imagecodecs>=2024.12.30",
+    "psdtags>=2025.1.1",
+]
+
+[project.scripts]
+img-proc = "img_proc:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
