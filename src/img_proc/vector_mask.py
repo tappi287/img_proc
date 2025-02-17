@@ -8,9 +8,19 @@ from psd_tools.psd.tagged_blocks import TaggedBlock
 from psd_tools.psd.vector import VectorMaskSetting, Path, InitialFillRule, PathFillRule, ClosedPath, ClosedKnotLinked
 
 
+def normalize_coordinates(col_j, row_i, width, height):
+    x = col_j / (width - 1.)
+    y = row_i / (height - 1.)
+    return x, y
+
+
+def to_pixel_coords(relative_coords, width, height):
+    return tuple(round(coord * dimension) for coord, dimension in zip(relative_coords, (width, height)))
+
+
 def create_psd_vector_path(contours: Sequence[np.ndarray], image_size: Tuple[int, int]) -> Path:
     # -- Init data structure
-    width, height = image_size[0] + 1, image_size[1] + 1
+    width, height = image_size[0], image_size[1]
     vector_paths = Path()
     initial_fill_rule = InitialFillRule()
     initial_fill_rule.value = 0
@@ -26,7 +36,8 @@ def create_psd_vector_path(contours: Sequence[np.ndarray], image_size: Tuple[int
         closed_path = ClosedPath()
 
         for point in contour:
-            vec_x, vec_y = _clip(point[0][0] / width), _clip(point[0][1] / height)
+            vec_x, vec_y = normalize_coordinates(point[0][0], point[0][1], width, height)
+            vec_x, vec_y = _clip(vec_x), _clip(vec_y)
 
             closed_path.append(
                 ClosedKnotLinked(preceding=(vec_y, vec_x), anchor=(vec_y, vec_x), leaving=(vec_y, vec_x))
